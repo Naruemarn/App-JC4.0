@@ -1,0 +1,1 @@
+1.serial ต้องเป็น primary key แล้ว Watt meter จะใช้ serial ซ้ำกันไม่ได้
