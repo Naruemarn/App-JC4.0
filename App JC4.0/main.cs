@@ -106,6 +106,7 @@ namespace App_JC4._0
         {
             RegistryKey rkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\International", true);
             rkey.SetValue("sShortDate", "yyyy-MM-dd");
+            rkey.SetValue("sShortTime", "HH:mm");
             rkey.SetValue("sTimeFormat", "HH:mm:ss");
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
