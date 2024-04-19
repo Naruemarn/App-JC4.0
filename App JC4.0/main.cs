@@ -4568,23 +4568,6 @@ namespace App_JC4._0
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void button1_Click(object sender, EventArgs e)
         {
-        // Acolor
-        //ipserver: 150.95.90.65
-        //port: 3306
-        //user: jewal_connect_acolor_u1
-        //pass:XroNwJUQmGEzoMEj
-        //databasename:jewal_connect_acolor
-
-        // Yasui
-        //ipserver:150.95.90.65
-        //port: 3306
-        //user: jewal_connect_yal_u1
-        //pass:ClaXms5U2EVgtWFf
-        //databasename:jewal_connect_yal
-
-
-
-
             Save_Config_Register(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text);
             Read_Config_Register();
 
