@@ -48,6 +48,7 @@ namespace App_JC4._0
         List<string> list_id = new List<string>();
         List<string> list_serial = new List<string>();
         List<string> list_productname = new List<string>();
+        List<string> list_machinetype = new List<string>();
         List<string> list_ipaddress = new List<string>();
         List<string> list_ftp_username = new List<string>();
         List<string> list_ftp_password = new List<string>();
@@ -155,9 +156,9 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static Thread Start(Action<string, string, string, string, string, string, string> action, string serial, string productname, string ip, string user, string password, string path_log, string path_recipe)
+        public static Thread Start(Action<string, string, string, string, string, string, string, string> action, string serial, string productname, string machine_type, string ip, string user, string password, string path_log, string path_recipe)
         {
-            Thread thread = new Thread(() => { action(serial, productname, ip, user, password, path_log, path_recipe); });
+            Thread thread = new Thread(() => { action(serial, productname, machine_type, ip, user, password, path_log, path_recipe); });
             thread.IsBackground = true; //<-- Set the thread to work in background
             thread.Start();
             return thread;
@@ -278,7 +279,7 @@ namespace App_JC4._0
             try
             {
 
-                string Query = "SELECT id, serial, product_name, ipaddress, ftp_username, ftp_password, path_log, path_recipe FROM tbl_setting WHERE product_name='ALTIMA' OR product_name='RBF37' OR product_name='K2NEXT-16000'";
+                string Query = "SELECT id, serial, product_name, ms_machinetype_id, ipaddress, ftp_username, ftp_password, path_log, path_recipe FROM tbl_setting WHERE ms_machinetype_id='1' OR ms_machinetype_id='2' OR ms_machinetype_id='3'";
 
                 MySqlConnection Conn = new MySqlConnection(connStr);
                 MySqlCommand cmd = new MySqlCommand(Query, Conn);
@@ -294,6 +295,7 @@ namespace App_JC4._0
                     list_id.Add(dr.GetString("id"));
                     list_serial.Add(dr.GetString("serial"));
                     list_productname.Add(dr.GetString("product_name"));
+                    list_machinetype.Add(dr.GetString("ms_machinetype_id"));
                     list_ipaddress.Add(dr.GetString("ipaddress"));
                     list_ftp_username.Add(dr.GetString("ftp_username"));
                     list_ftp_password.Add(dr.GetString("ftp_password"));
@@ -1736,8 +1738,28 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public void RunFTP(string serial, string machine_type, string ip, string user, string password, string remotePath_log, string remotePath_recipe)
+        public void RunFTP(string serial, string product_name, string machine_type, string ip, string user, string password, string remotePath_log, string remotePath_recipe)
         {
+
+
+            if(machine_type == "1")
+            {
+                machine_type = "K2NEXT";
+                remotePath_log = "/";
+                remotePath_recipe = "/";
+            }
+            else if(machine_type == "2")
+            {
+                machine_type = "ALTIMA";
+                remotePath_log = "/log/";
+                remotePath_recipe = "/recipe/";
+            }
+            else if(machine_type == "3")
+            {
+                machine_type = "RBF";
+                remotePath_log = "/log/";
+                remotePath_recipe = "/recipe/";
+            }
 
             //string currentDir = Directory.GetCurrentDirectory(); // ติด permission ต้องไปวางใน user path
             string user_path = Application.UserAppDataPath; // C:\Users\Narue\AppData\Roaming\Yasui\App JC4.0\1.0.0.0
@@ -1841,7 +1863,7 @@ namespace App_JC4._0
                         RemoteDirectoryInfo directoryInfo_recipe = session.ListDirectory(remotePath_recipe);
 
 
-                        if (machine_type == "RBF37")
+                        if (machine_type == "RBF")
                         {
                             List<RemoteFileInfo> fileInfo_WorkLog = new List<RemoteFileInfo>();
                             List<RemoteFileInfo> fileInfo_WorkLogRecipe = new List<RemoteFileInfo>();
@@ -1934,7 +1956,7 @@ namespace App_JC4._0
                                 }
                             }
                         }
-                        else if (machine_type == "K2NEXT-16000")
+                        else if (machine_type == "K2NEXT")
                         {
                             // ------------------------------------------
                             string tablename = "";
@@ -4309,7 +4331,7 @@ namespace App_JC4._0
                 string query = "SELECT " +
                     "tbl_setting.serial , tbl_setting.product_name, " +
                     "tr_status.ipaddress, tr_status.online, tr_status.run, tr_status.warning, tr_status.err, tr_status.altima_maintenance, tr_status.counter, tr_status.updated_time FROM tbl_setting " +
-                    "INNER JOIN tr_status ON tbl_setting.ipaddress = tr_status.ipaddress WHERE online = 1;";
+                    "INNER JOIN tr_status ON tbl_setting.serial = tr_status.serial WHERE online = 1;";
 
 
                 using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -4546,19 +4568,7 @@ namespace App_JC4._0
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void button1_Click(object sender, EventArgs e)
         {
-        // Acolor
-        //ipserver: 150.95.90.65
-        //port: 3306
-        //user: jewal_connect_acolor_u1
-        //pass:XroNwJUQmGEzoMEj
-        //databasename:jewal_connect_acolor
-
-        // Yasui
-        //ipserver:150.95.90.65
-        //port: 3306
-        //user: jewal_connect_yal_u1
-        //pass:ClaXms5U2EVgtWFf
-        //databasename:jewal_connect_yal
+       
 
 
 
@@ -4597,7 +4607,7 @@ namespace App_JC4._0
 
                             Check_Online();
 
-                            Start(new Action<string, string, string, string, string, string, string>(RunFTP), list_serial[i], list_productname[i], list_ipaddress[i], list_ftp_username[i], list_ftp_password[i], list_path_log[i], list_path_recipe[i]);
+                            Start(new Action<string, string, string, string, string, string, string, string>(RunFTP), list_serial[i], list_productname[i], list_machinetype[i],  list_ipaddress[i], list_ftp_username[i], list_ftp_password[i], list_path_log[i], list_path_recipe[i]);
                         }
 
 
@@ -4717,19 +4727,26 @@ namespace App_JC4._0
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            // Show Line Number
-            var grid = sender as DataGridView;
-            var rowIdx = (e.RowIndex + 1).ToString();
-
-            var centerFormat = new StringFormat()
+            try
             {
-                // right alignment might actually make more sense for numbers
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
+                // Show Line Number
+                var grid = sender as DataGridView;
+                var rowIdx = (e.RowIndex + 1).ToString();
 
-            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
-            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+                var centerFormat = new StringFormat()
+                {
+                    // right alignment might actually make more sense for numbers
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+
+                var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
+                e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
