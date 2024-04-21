@@ -1539,6 +1539,16 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        public static String convert(int mins)
+        {
+
+            int hours = (mins - mins % 60) / 60;
+
+            return "" + hours + ":" + (mins - hours * 60);
+           
+        }
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         void CheckTime_RealTimeStatus(string serial, string machine_type, string ip, string last_modified)
         {
             // 1.เทียบเวลา เกินจาก ไฟล์ที่ถูกแก้ไขล่าสุด ไปกี่นาที
@@ -1550,10 +1560,21 @@ namespace App_JC4._0
             {
                 // file Worklog ยังไม่มีการ Update ไม่ต้องทำอะไร
                 // Machine Status "IDLE"
-                Insert_Update_Status_RUN_IDLE(ip, false, true, serial, machine_type);
-                textBox9.Text += ip + " --> IDLE --> " + total.ToString("0.0") + " m ago\r\n";
+                if (total <= 60)
+                {                    
+                    textBox9.Text += ip + " --> IDLE --> " + total.ToString("0.0") + " m ago\r\n";
+                }
+                else
+                {
+                    int total_int = Convert.ToInt32(total);
+                    string total_hour = convert(total_int);
+
+                    textBox9.Text += ip + " --> IDLE --> " + total_hour + " h ago\r\n";                   
+                }
                 textBox9.SelectionStart = textBox9.Text.Length;
                 textBox9.ScrollToCaret();
+
+                Insert_Update_Status_RUN_IDLE(ip, false, true, serial, machine_type);
             }
             else if (total < 0)    // ติดลบ
             {
@@ -1564,7 +1585,7 @@ namespace App_JC4._0
                 textBox9.SelectionStart = textBox9.Text.Length;
                 textBox9.ScrollToCaret();
             }
-            else
+            else 
             {
                 // Machine Status "Running"
                 Insert_Update_Status_RUN_IDLE(ip, true, false, serial, machine_type);
@@ -1751,12 +1772,16 @@ namespace App_JC4._0
             else if(machine_type == "2")
             {
                 machine_type = "ALTIMA";
-                remotePath_log = "/log/";
-                remotePath_recipe = "/recipe/";
+                remotePath_log = "/home/pi/log/";
+                remotePath_recipe = "/home/pi/recipe/";
             }
             else if(machine_type == "3")
             {
                 machine_type = "RBF";
+                remotePath_log = "/log/";
+                remotePath_recipe = "/recipe/";
+
+                //
                 remotePath_log = "/log/";
                 remotePath_recipe = "/recipe/";
             }
