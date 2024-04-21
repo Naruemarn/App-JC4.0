@@ -1772,8 +1772,11 @@ namespace App_JC4._0
             else if(machine_type == "2")
             {
                 machine_type = "ALTIMA";
-                remotePath_log = "/home/pi/log/";
-                remotePath_recipe = "/home/pi/recipe/";
+                remotePath_log = "/log/";
+                remotePath_recipe = "/recipe/";
+
+                //remotePath_log = "/home/pi/log/";
+                //remotePath_recipe = "/home/pi/recipe/";
             }
             else if(machine_type == "3")
             {
@@ -1781,9 +1784,8 @@ namespace App_JC4._0
                 remotePath_log = "/log/";
                 remotePath_recipe = "/recipe/";
 
-                //
-                remotePath_log = "/log/";
-                remotePath_recipe = "/recipe/";
+                //remotePath_log = "/home/pi/log/";
+                //remotePath_recipe = "/home/pi/recipe/";
             }
 
             //string currentDir = Directory.GetCurrentDirectory(); // ติด permission ต้องไปวางใน user path
