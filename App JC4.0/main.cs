@@ -1621,28 +1621,7 @@ namespace App_JC4._0
                     if ((total >= GREEN0) && (total < GREEN1)) // 1-2 Minutes Green
                     {
 
-                    status_timeline = Get_last_status_DB("tr_altima_status", filename, serial);
-
-                    /*if (status_timeline == "1") // Green
-                    {
-                        status_timeline = "1";  
-                        Update_Timeline_ALTIMA(ip, filename, "1", dt, last_modified, dt, total.ToString());       
-                        textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago\r\n";
-                    }
-                    else if (status_timeline == "2") // Yellow
-                    {
-                        string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, ip, "2");
-
-                        status_timeline = "1";  
-                        Insert_Timeline_ALTIMA(ip, filename, status_timeline, last_datetime_end, dt, last_modified, dt, total.ToString());
-                        textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago  <----- Insert\r\n";
-                    }
-                    else if (status_timeline == "3") // Red
-                    {
-                        status_timeline = "1";
-                        Insert_Timeline_ALTIMA(ip, filename, status_timeline, dt, dt, last_modified, dt, total.ToString());
-                        textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago  <----- Insert\r\n";
-                    }*/
+                        status_timeline = Get_last_status_DB("tr_altima_status", filename, serial);
 
                         string last_datetime_start = Get_last_datetime_start_DB("tr_altima_status", filename, serial);      // เวลาที่เริ่มการบันทึก Timeline Status=1
 
@@ -1703,7 +1682,7 @@ namespace App_JC4._0
                         {
                             status_timeline = "3";
 
-                            string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "2");
+                            string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "3");
 
                             Update_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, last_modified, dt, total.ToString("0.# min ago"));        // Red
 
@@ -4224,12 +4203,12 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public string Get_last_ID_DB(string tablename, string filename, string ip)
+        public string Get_last_ID_DB(string tablename, string filename, string serial)
         {
             var result = string.Empty;
             try
             {
-                string Query = "SELECT id FROM " + tablename + " WHERE filename='" + filename + "' AND ipaddress='" + ip + "' ORDER BY id desc LIMIT 1;";
+                string Query = "SELECT id FROM " + tablename + " WHERE filename='" + filename + "' AND serial='" + serial + "' ORDER BY id desc LIMIT 1;";
 
                 MySqlConnection Conn = new MySqlConnection(connStr);
                 MySqlCommand cmd = new MySqlCommand(Query, Conn);
@@ -4540,7 +4519,7 @@ namespace App_JC4._0
                 last_modified_ = s.ToString("yyyy-MM-dd HH:mm:ss");
 
                 string tablename = "tr_altima_status";
-                string last_id = Get_last_ID_DB(tablename, filename_, ip_);
+                string last_id = Get_last_ID_DB(tablename, filename_, serial_);
 
 
                 if (last_id != "")
@@ -4682,8 +4661,6 @@ namespace App_JC4._0
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void button2_Click(object sender, EventArgs e)
         {
-            
-
             textBox9.Text = "";
             textBox11.Text = "";
             textBox12.Text = "";
