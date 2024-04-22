@@ -55,7 +55,7 @@ namespace App_JC4._0
         List<string> list_path_log = new List<string>();
         List<string> list_path_recipe = new List<string>();
 
-        string status_timeline = "2";
+        string status_timeline = "1";
         string last_datetime_end = "";
         bool f_start = false;
         bool f_update = false;
@@ -1442,7 +1442,7 @@ namespace App_JC4._0
                     }
                     else // file Waxshoot_log ยังไม่มีการ Update 
                     {
-                        string[] res = Get_Counter_UpdateTime("tr_status", fn_WaxshootLog, ip);
+                        string[] res = Get_Counter_UpdateTime("tr_status", fn_WaxshootLog, serial);
 
                         textBox12.Text += ip + " --> " + "   DB: " + last_modified_DB.Substring(11, 8) + "  ALTIMA: " + last_modified.Substring(11, 8) + " --> Waiting... --> " + res[0].ToString() + " Qty.\r\n";
                         textBox12.SelectionStart = textBox12.Text.Length;
@@ -1472,39 +1472,7 @@ namespace App_JC4._0
                     // 2.Timeline Status: Green
                     string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    /*double total = GetTimeDifferent(last_modified);
-
-                    status_timeline = "1"; // Green
-                    string diff_time = total.ToString("0.#  min ago");
-
-                    if ((total >= 0) && (total <= 2)) // 1-2 Minutes --> ignore old file
-                    {
-
-                        textBox9.Text += ip + " --> New file --> " + fn_WaxshootLog + "\r\n";
-                        textBox9.SelectionStart = textBox9.Text.Length;
-                        textBox9.ScrollToCaret();
-
-
-                        textBox11.Text += ip + " --> New file --> " + fn_WaxshootLog + "\r\n";
-                        textBox11.SelectionStart = textBox11.Text.Length;
-                        textBox11.ScrollToCaret();
-
-                        Insert_Timeline_ALTIMA(ip, fn_WaxshootLog, status_timeline, dt, dt, last_modified, dt, diff_time);
-                    }
-                    else
-                    {
-                        textBox9.Text += ip + " --> Old file --> " + fn_WaxshootLog + "\r\n";
-                        textBox9.SelectionStart = textBox9.Text.Length;
-                        textBox9.ScrollToCaret();
-
-
-                        textBox11.Text += ip + " --> Old file --> " + fn_WaxshootLog + "\r\n";
-                        textBox11.SelectionStart = textBox11.Text.Length;
-                        textBox11.ScrollToCaret();
-                    }*/
-
-
-
+                  
 
                     textBox9.Text += ip + " --> New file --> " + fn_WaxshootLog + "\r\n";
                     textBox9.SelectionStart = textBox9.Text.Length;
@@ -1625,7 +1593,13 @@ namespace App_JC4._0
 
                         string last_datetime_start = Get_last_datetime_start_DB("tr_altima_status", filename, serial);      // เวลาที่เริ่มการบันทึก Timeline Status=1
 
-                        if((status_timeline == "2") || (status_timeline == "3") || (status_timeline == ""))
+                                                
+                        if (status_timeline == "1")
+                        {
+                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, "1", dt, last_modified, dt, total.ToString("0.# min ago"));
+                            textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago\r\n";
+                        }
+                        else if ((status_timeline == "2") || (status_timeline == "3") || (status_timeline == ""))
                         {
                             status_timeline = "1";
                             Insert_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, dt, last_modified, dt, total.ToString("0.# min ago"));
@@ -1635,12 +1609,7 @@ namespace App_JC4._0
                         {
 
                         }
-                        else
-                        {
-                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, "1", dt, last_modified, dt, total.ToString("0.# min ago"));
-                            textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago\r\n";
-                        }
-                        
+
 
                     }
                     else if ((total >= YELLOW0) && (total < YELLOW1))  // 3-15 Yellow
@@ -1650,25 +1619,21 @@ namespace App_JC4._0
                         if (status_timeline == "1")// Insert
                         {
                             string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "1");
-
                             status_timeline = "2";  // Yellow
 
                             Insert_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, last_datetime_end, dt, last_modified, dt, total.ToString("0.# min ago"));
+
+                            textBox11.Text += ip + " --> Yellow --> " + total.ToString("0.0") + " m ago\r\n";
+                        }                        
+                        else if (status_timeline == "2")// Update
+                        {
+                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, last_modified, dt, total.ToString("0.# min ago"));        // Yellow
 
                             textBox11.Text += ip + " --> Yellow --> " + total.ToString("0.0") + " m ago\r\n";
                         }
                         else if (status_timeline == "4")
                         {
 
-                        }
-                        else // Update
-                        {
-                            //string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "2");
-
-                            status_timeline = "2";
-                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, last_modified, dt, total.ToString("0.# min ago"));        // Yellow
-
-                            textBox11.Text += ip + " --> Yellow --> " + total.ToString("0.0") + " m ago\r\n";
                         }
                     }
                     else if ((total >= RED0) && (total < RED1))  // 15-30 Red
@@ -1678,27 +1643,23 @@ namespace App_JC4._0
                         if (status_timeline == "2") // Insert
                         {
                             string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "2");
-                            // string last_time_end = last_datetime_end.Substring(10, 9); error
-
                             status_timeline = "3";  // Red
 
                             Insert_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, last_datetime_end, dt, last_modified, dt, total.ToString("0.# min ago"));
+
+                            textBox11.Text += ip + " --> Red --> " + total.ToString("0.0") + " m ago\r\n";
+                        }                        
+                        else if (status_timeline == "3")  // Update
+                        {
+                            status_timeline = "3";
+
+                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, last_modified, dt, total.ToString("0.# min ago"));        // Red
 
                             textBox11.Text += ip + " --> Red --> " + total.ToString("0.0") + " m ago\r\n";
                         }
                         else if (status_timeline == "4")
                         {
 
-                        }
-                        else // Update
-                        {
-                            status_timeline = "3";
-
-                            //string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", filename, serial, "3");
-
-                            Update_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, last_modified, dt, total.ToString("0.# min ago"));        // Red
-
-                            textBox11.Text += ip + " --> Red --> " + total.ToString("0.0") + " m ago\r\n";
                         }
                     }
                     else
@@ -4246,7 +4207,7 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public string[] Get_Counter_UpdateTime(string tablename, string filename, string ip)
+        public string[] Get_Counter_UpdateTime(string tablename, string filename, string serial)
         {
             string[] result = new string[2];
             try
@@ -4256,7 +4217,7 @@ namespace App_JC4._0
                 {
                     connection.Open();
 
-                    string Query = "SELECT counter, updated_time FROM " + tablename + " WHERE ipaddress='" + ip + "';";
+                    string Query = "SELECT counter, updated_time FROM " + tablename + " WHERE serial='" + serial + "';";
 
                     using (MySqlCommand command = new MySqlCommand(Query, connection))
                     {
