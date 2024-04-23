@@ -55,10 +55,6 @@ namespace App_JC4._0
         List<string> list_path_log = new List<string>();
         List<string> list_path_recipe = new List<string>();
 
-        string status_timeline = "1";
-        string last_datetime_end = "";
-        bool f_start = false;
-        bool f_update = false;
 
         int cnt_timer = 0;
 
@@ -1462,10 +1458,6 @@ namespace App_JC4._0
                 {
                     // มีไฟล์ใหม่เข้ามา New file
 
-                    f_start = true;
-
-                    f_update = true; // อาจต้องลบ ทดสอบ
-
                     // 1.Machine Status "Running"          
                     // Realtime Status : Machine Status "Running"
                     Insert_Update_Status_RUN_IDLE(ip, true, false, serial, machine_type);
@@ -1485,13 +1477,13 @@ namespace App_JC4._0
                     textBox11.SelectionStart = textBox11.Text.Length;
                     textBox11.ScrollToCaret();
 
-                    Insert_Timeline_ALTIMA(serial, machine_type, ip, fn_WaxshootLog, status_timeline, dt, dt, last_modified, dt, "0 min ago");
+                    Insert_Timeline_ALTIMA(serial, machine_type, ip, fn_WaxshootLog, "1", dt, dt, last_modified, dt, "0 min ago");
 
 
 
 
                     // ค้นหา last datetime_end ล่าสุด
-                    last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", fn_WaxshootLog, ip);
+                    string last_datetime_end = Get_last_datetime_end_DB("tr_altima_status", fn_WaxshootLog, ip);
 
                     //----------------------------------------------
 
@@ -1570,6 +1562,8 @@ namespace App_JC4._0
         {
             try
             {
+                string status_timeline = "";
+
                 // 2.เวลาที่เก็บเข้า database ก่อนหน้า และอ่านขึ้นมา
                 string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -1601,7 +1595,7 @@ namespace App_JC4._0
                             Update_Timeline_ALTIMA(serial, machine_type, ip, filename, "1", dt, last_modified, dt, total.ToString("0.# min ago"));
                             textBox11.Text += ip + " --> Green --> " + total.ToString("0.0") + " m ago\r\n";
                         }
-                        else if ((status_timeline == "2") || (status_timeline == "3") || (status_timeline == ""))
+                        else if ((status_timeline == "2") || (status_timeline == "3"))
                         {
                             status_timeline = "1";
                             Insert_Timeline_ALTIMA(serial, machine_type, ip, filename, status_timeline, dt, dt, last_modified, dt, total.ToString("0.# min ago"));
