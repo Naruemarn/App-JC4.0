@@ -36,7 +36,7 @@ namespace App_JC4._0
 
         //----------------------------------------------------------------------------
 
-        string connStr = "";
+        public static string connStr = "";
 
         string timeStart = null;
 
@@ -61,6 +61,8 @@ namespace App_JC4._0
         bool f_update = false;
 
         int cnt_timer = 0;
+
+        public static string serial_global = "";
 
 
 
@@ -4345,7 +4347,7 @@ namespace App_JC4._0
                                     if (dataGridView1.Rows[i].Cells[4].Value.ToString() == "1")
                                     {
                                         dataGridView1.Rows[i].DefaultCellStyle.ForeColor = Color.Black;
-                                        dataGridView1.Rows[i].DefaultCellStyle.BackColor = Color.Green;
+                                        dataGridView1.Rows[i].DefaultCellStyle.BackColor = Color.Lime;
                                     }
 
                                     if (dataGridView1.Rows[i].Cells[5].Value.ToString() == "1")
@@ -4720,7 +4722,15 @@ namespace App_JC4._0
 
             }
         }
-
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            serial_global = this.dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            Form timeline = new timeline();
+            timeline.MdiParent = this.MdiParent;
+            timeline.Show();
+        }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
     }
