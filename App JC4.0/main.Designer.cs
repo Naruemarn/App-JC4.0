@@ -75,6 +75,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -495,11 +496,23 @@
             this.label20.TabIndex = 47;
             this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.Color.Black;
+            this.textBox5.ForeColor = System.Drawing.Color.Lime;
+            this.textBox5.Location = new System.Drawing.Point(249, 67);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox5.Size = new System.Drawing.Size(302, 136);
+            this.textBox5.TabIndex = 48;
+            // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1259, 651);
+            this.Controls.Add(this.textBox5);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.label19);
@@ -591,6 +604,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
+        private System.Windows.Forms.TextBox textBox5;
     }
 }
 

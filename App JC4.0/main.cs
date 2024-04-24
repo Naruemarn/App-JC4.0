@@ -14,6 +14,8 @@ using System.Globalization;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Net;
+using System.Net.Sockets;
 
 namespace App_JC4._0
 {
@@ -50,6 +52,7 @@ namespace App_JC4._0
         List<string> list_productname = new List<string>();
         List<string> list_machinetype = new List<string>();
         List<string> list_ipaddress = new List<string>();
+        List<string> list_ipaddress_filter = new List<string>();
         List<string> list_ftp_username = new List<string>();
         List<string> list_ftp_password = new List<string>();
         List<string> list_path_log = new List<string>();
@@ -1070,11 +1073,13 @@ namespace App_JC4._0
 
                     if (last_modified != last_modified_DB) // file WorkLog มีการ Update
                     {
+                        
+
                         // Machine Status "Running"
                         Insert_Update_Status_RUN_IDLE(ip, true, false, serial, machine_type);
 
                         // Reset Warning/Error
-                        Insert_Update_Status_WARNING_ERROR(ip, false, false); // reset
+                        Insert_Update_Status_WARNING_ERROR(ip, false, false, serial); // reset
 
 
                         textBox13.Text += DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " --> RBF37 --> " + ip + " --> File Updated --> " + "DB Last odified: " + last_modified_DB.Substring(11, 8) + "     FTP Last modified: " + last_modified.Substring(11, 8) + "                    <- - - - - - - - - - - - - - - - - START\r\n";
@@ -1417,7 +1422,7 @@ namespace App_JC4._0
                     if (last_modified != last_modified_DB) // ถ้า file WaxshootLog มีการ Update
                     {
 
-                        Insert_Update_Status_WARNING_ERROR(ip, false, false); // reset
+                        Insert_Update_Status_WARNING_ERROR(ip, false, false, serial); // reset
 
                         textBox12.Text += ip + " --> File Updated --> " + "DB: " + last_modified_DB.Substring(11, 8) + "     ALTIMA: " + last_modified.Substring(11, 8) + "                    <- - - - - - - - - - - - - - - - - START\r\n";
                         textBox12.SelectionStart = textBox12.Text.Length;
@@ -1781,23 +1786,6 @@ namespace App_JC4._0
             {
                 try
                 {
-                    /*string timenow_start = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                    string[] x = timenow_start.Split(' ');
-                    string yearmmdd_before = x[0];
-                    string hhmm_before = x[1];
-
-                    string[] date_before = yearmmdd_before.Split('-');
-                    int year_before = int.Parse(date_before[0]);
-                    int month_before = int.Parse(date_before[1]);
-                    int day_before = int.Parse(date_before[2]);
-
-                    string[] time_before = hhmm_before.Split(':');
-                    int hh_before = int.Parse(time_before[0]);
-                    int min_before = int.Parse(time_before[1]);
-                    int sec_before = int.Parse(time_before[2]);*/
-
-
-
                     if ((user == "") && (password == ""))
                     {
                         user = " ";
@@ -1824,14 +1812,8 @@ namespace App_JC4._0
                         // Connect                        
                         session.Open(sessionOptions);
 
-                        //label13.Text = "FTP";
-
-
-
-                        // Update ONLINE
                         Insert_Update_Status_ONLINE(ip, true, false, serial, machine_type);        // Online
 
-                        // Machine Status "IDLE"
                         //Insert_Update_Status_RUN_IDLE(ip, false, true);     // IDLE
 
                         RemoteDirectoryInfo directoryInfo_log = session.ListDirectory(remotePath_log);
@@ -2047,7 +2029,7 @@ namespace App_JC4._0
                                             DeleteFile(fullpath);
 
 
-                                            string xx = Get_Record_Today_DB(ip);
+                                            string xx = Get_Record_Today_DB(serial);
                                             Insert_Update_Counter(serial, machine_type, ip, int.Parse(xx));
                                         }
                                         else
@@ -2234,39 +2216,18 @@ namespace App_JC4._0
                         //Debug.WriteLine("Close Session...");
                         //Debug.WriteLine("Sleeping 60s ...");
 
-                        //label13.Text = "";
-
-
                         //Thread.Sleep(60000);
                         Thread.Sleep(5000);
-
-                        /*string timenow_end = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                        string[] a = timenow_end.Split(' ');
-                        string yearmmdd_current = a[0];
-                        string hhmm_current = a[1];
-
-                        string[] date_current = yearmmdd_current.Split('-');
-                        int year_current = int.Parse(date_current[0]);
-                        int month_current = int.Parse(date_current[1]);
-                        int day_current = int.Parse(date_current[2]);
-
-                        string[] time_current = hhmm_current.Split(':');
-                        int hh_current = int.Parse(time_current[0]);
-                        int min_current = int.Parse(time_current[1]);
-                        int sec_current = int.Parse(time_current[2]);
-
-                        DateTime date1 = new DateTime(year_before, month_before, day_before, hh_before, min_before, sec_before);
-                        DateTime date2 = new DateTime(year_current, month_current, day_current, hh_current, min_current, sec_current);
-                        double totalminutes = (date2 - date1).TotalMilliseconds / 1000;*/
-                        //label14.Text = totalminutes.ToString("0") + " sec";
                     }
                 }
                 catch (Exception ex)
                 {
-                    /*if (ip == "192.168.100.105")
-                    {
-                        MessageBox.Show("IP : " + ip + "          " + ex.ToString());
-                    }*/
+                    MessageBox.Show(ex.ToString());
+                    //if (ip == "192.168.2.100")
+                    //{
+                    //    MessageBox.Show("IP : " + ip + "          " + ex.ToString());
+                    //}
+
                     //Debug.WriteLine("IP : " + ip + "          " + ex.ToString());
 
                     Thread.Sleep(5000);
@@ -2707,7 +2668,7 @@ namespace App_JC4._0
                                 Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                 // Update Error
-                                Insert_Update_Status_WARNING_ERROR(ip, false, true);
+                                Insert_Update_Status_WARNING_ERROR(ip, false, true, serial);
                             }
                             else if (VALUE.Contains("Warning"))
                             {
@@ -2720,7 +2681,7 @@ namespace App_JC4._0
 
 
                                 // Update Error
-                                Insert_Update_Status_WARNING_ERROR(ip, true, false);
+                                Insert_Update_Status_WARNING_ERROR(ip, true, false, serial);
 
                                 // ต้องเข้าไปเอา Local Time ก่อนหน้า จาก Database แล้วมาลบกับเวลาที่ Warning ใหม่
                                 string time_warning_before = Get_last_Warning_LocalTime_DB("Warning", tablename, filename, serial);
@@ -2781,7 +2742,7 @@ namespace App_JC4._0
                                         Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                         // Update Warning
-                                        Insert_Update_Status_WARNING_ERROR(ip, true, false);
+                                        Insert_Update_Status_WARNING_ERROR(ip, true, false, serial);
                                     }
                                 }
                                 else
@@ -2831,7 +2792,7 @@ namespace App_JC4._0
                                 Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                 // Reset Warning/Error
-                                Insert_Update_Status_WARNING_ERROR(ip, false, false);
+                                Insert_Update_Status_WARNING_ERROR(ip, false, false, serial);
                             }
                         }
                         else
@@ -2924,7 +2885,7 @@ namespace App_JC4._0
                                 Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                 // Update Error
-                                Insert_Update_Status_WARNING_ERROR(ip, false, true);
+                                Insert_Update_Status_WARNING_ERROR(ip, false, true, serial);
                             }
                             else if (VALUE.Contains("Warning"))
                             {
@@ -2936,7 +2897,7 @@ namespace App_JC4._0
                                 VALUE = values[3];
 
                                 // Update Error
-                                Insert_Update_Status_WARNING_ERROR(ip, true, false);
+                                Insert_Update_Status_WARNING_ERROR(ip, true, false, serial);
 
 
                                 // ต้องเข้าไปเอา Local Time ก่อนหน้า จาก Database แล้วมาลบกับเวลาที่ Warning ใหม่
@@ -2998,7 +2959,7 @@ namespace App_JC4._0
                                         Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                         // Update Warning
-                                        Insert_Update_Status_WARNING_ERROR(ip, true, false);
+                                        Insert_Update_Status_WARNING_ERROR(ip, true, false, serial);
                                     }
                                 }
                                 else
@@ -3036,7 +2997,7 @@ namespace App_JC4._0
                                 Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                 // Reset Warning/Error
-                                Insert_Update_Status_WARNING_ERROR(ip, false, true);
+                                Insert_Update_Status_WARNING_ERROR(ip, false, true, serial);
                             }
                             else if (VALUE.Contains("Power ON."))
                             {
@@ -3051,7 +3012,7 @@ namespace App_JC4._0
                                 Insert_HistoryLog(serial, machine_type, tablename, ip, filename, last_modified, JAPAN_TIME, LOCAL_TIME, TYPE, VALUE);
 
                                 // Reset Warning/Error
-                                Insert_Update_Status_WARNING_ERROR(ip, false, false);
+                                Insert_Update_Status_WARNING_ERROR(ip, false, false, serial);
                             }
                         }
                         else
@@ -3137,7 +3098,7 @@ namespace App_JC4._0
                             local_time = dt_local.ToString("yyyy-MM-dd HH:mm:ss");
 
 
-                            Insert_Update_Status_Altima_maintenace(ip, status); // 0='All of other status', 1='Regular maintenance', 2='Repair'
+                            Insert_Update_Status_Altima_maintenace(serial, status); // 0='All of other status', 1='Regular maintenance', 2='Repair'
 
                             // Insert to Database
                             Insert_MTTRLog(serial, machine_type, tablename, ip, filename, last_modified, system_time, local_time, status, value);
@@ -3903,7 +3864,7 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        void Insert_Update_Status_Altima_maintenace(string ip_, string status_)
+        void Insert_Update_Status_Altima_maintenace(string serial_, string status_)
         {
             try
             {
@@ -3913,12 +3874,12 @@ namespace App_JC4._0
                 MySqlCommand comm = conn.CreateCommand();
 
 
-                string sql = "INSERT INTO tr_status(ipaddress, altima_maintenance) VALUES(@ipaddress, @altima_maintenance)" +
+                string sql = "INSERT INTO tr_status(serial, altima_maintenance) VALUES(@serial, @altima_maintenance)" +
                     " ON DUPLICATE KEY UPDATE altima_maintenance=@altima_maintenance;";
 
                 comm.CommandText = sql;
 
-                comm.Parameters.AddWithValue("@ipaddress", ip_);
+                comm.Parameters.AddWithValue("@serial", serial_);
                 comm.Parameters.AddWithValue("@altima_maintenance", int.Parse(status_));
                 comm.ExecuteNonQuery();
                 conn.Close();
@@ -4034,7 +3995,7 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        void Insert_Update_Status_WARNING_ERROR(string ip_, bool warning_, bool error_)
+        void Insert_Update_Status_WARNING_ERROR(string ip_, bool warning_, bool error_, string serial_)
         {
             try
             {
@@ -4044,7 +4005,7 @@ namespace App_JC4._0
                 MySqlCommand comm = conn.CreateCommand();
 
 
-                string sql = "INSERT INTO tr_status(ipaddress, warning, err) VALUES(@ipaddress, @warning, @err)" +
+                string sql = "INSERT INTO tr_status(ipaddress, warning, err) VALUES(@ipaddress, @warning, @err, @serial)" +
                     " ON DUPLICATE KEY UPDATE warning=@warning, err=@err;";
 
                 comm.CommandText = sql;
@@ -4052,6 +4013,7 @@ namespace App_JC4._0
                 comm.Parameters.AddWithValue("@ipaddress", ip_);
                 comm.Parameters.AddWithValue("@warning", warning_);
                 comm.Parameters.AddWithValue("@err", error_);
+                comm.Parameters.AddWithValue("@serial", serial_);
                 comm.ExecuteNonQuery();
                 conn.Close();
 
@@ -4091,10 +4053,19 @@ namespace App_JC4._0
                 if(online_ == true)
                 {
                     Debug.WriteLine("IP: " + ip_ + "  -------> ONLINE");
+
+                    textBox5.Text += ip_ + "  -------> ONLINE\r\n";
+                    textBox5.ForeColor=Color.Lime;
+                    textBox5.SelectionStart = textBox5.Text.Length;
+                    textBox5.ScrollToCaret();
                 }
                 else
                 {
                     Debug.WriteLine("IP: " + ip_ + "  -------> OFFLINE");
+                    textBox5.Text += ip_ + "  -------> OFFLINE\r\n";
+                    textBox5.ForeColor = Color.Lime;
+                    textBox5.SelectionStart = textBox5.Text.Length;
+                    textBox5.ScrollToCaret();
                 }
                 
             }
@@ -4541,6 +4512,22 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        public static string GetLocalIPAddress()
+        {
+            // To check if you're connected or not:
+            // NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void button1_Click(object sender, EventArgs e)
         {
             Save_Config_Register(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text);
@@ -4554,16 +4541,29 @@ namespace App_JC4._0
             {
                 if (button1.Text == "START")
                 {
-                    bool res = ReadSettingDB();
+                    bool res = ReadSettingDB(); // Get Setting
 
                     if (res)
                     {
+                        string ip_local = GetLocalIPAddress();
+
+                        var x = ip_local.Split('.');
+
+                        ip_local = x[0] + "." + x[1] + "." + x[2];
+
+                        var filter_ip = list_ipaddress.Where(stringToCheck => stringToCheck.Contains(ip_local));
+
+                        foreach (var ip in filter_ip)
+                        {
+                            list_ipaddress_filter.Add(ip);
+                        }
+
 
                         Show_Status_GridView();
 
-                        int cnt_id = list_id.Count();
+                        //int cnt_id = list_id.Count();
 
-                        for (int i = 0; i < cnt_id; i++)
+                        for (int i = 0; i < list_ipaddress_filter.Count(); i++)
                         {
                             /*textBox5.Text += list_ipaddress[i] + "\r\n";
                             textBox6.Text += list_serial[i] + "\r\n";
@@ -4577,7 +4577,7 @@ namespace App_JC4._0
 
                             Check_Online();
 
-                            Start(new Action<string, string, string, string, string, string, string, string>(RunFTP), list_serial[i], list_productname[i], list_machinetype[i],  list_ipaddress[i], list_ftp_username[i], list_ftp_password[i], list_path_log[i], list_path_recipe[i]);
+                            Start(new Action<string, string, string, string, string, string, string, string>(RunFTP), list_serial[i], list_productname[i], list_machinetype[i], list_ipaddress_filter[i], list_ftp_username[i], list_ftp_password[i], list_path_log[i], list_path_recipe[i]);
                         }
 
 
