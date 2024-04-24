@@ -2222,7 +2222,7 @@ namespace App_JC4._0
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    //MessageBox.Show(ex.ToString());
                     //if (ip == "192.168.2.100")
                     //{
                     //    MessageBox.Show("IP : " + ip + "          " + ex.ToString());
@@ -2275,7 +2275,7 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        void Save_Config_Register(string server, string user, string password, string databasename)
+        void Save_Config_Register(string server, string user, string password, string databasename, string ip)
         {
             RegistryKey RegKeyWrite = Registry.CurrentUser;
             RegKeyWrite = RegKeyWrite.CreateSubKey(@"Software\CSHARP\WriteRegistryValue");
@@ -2283,6 +2283,7 @@ namespace App_JC4._0
             RegKeyWrite.SetValue("user", user);
             RegKeyWrite.SetValue("password", password);
             RegKeyWrite.SetValue("databasename", databasename);
+            RegKeyWrite.SetValue("ip", ip);
             RegKeyWrite.Close();
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2299,11 +2300,13 @@ namespace App_JC4._0
                 Object user = RegKeyRead.GetValue("user");
                 Object password = RegKeyRead.GetValue("password");
                 Object databasename = RegKeyRead.GetValue("databasename");
+                Object ip = RegKeyRead.GetValue("ip");
 
                 textBox1.Text = server.ToString();
                 textBox2.Text = user.ToString();
                 textBox3.Text = password.ToString();
                 textBox4.Text = databasename.ToString();
+                textBox6.Text = ip.ToString();
 
                 Server_ini = textBox1.Text;
                 User_ini = textBox2.Text;
@@ -4530,7 +4533,7 @@ namespace App_JC4._0
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void button1_Click(object sender, EventArgs e)
         {
-            Save_Config_Register(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text);
+            Save_Config_Register(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox6.Text);
             Read_Config_Register();
 
 
@@ -4545,11 +4548,13 @@ namespace App_JC4._0
 
                     if (res)
                     {
-                        string ip_local = GetLocalIPAddress();
+                        //string ip_local = GetLocalIPAddress();
 
-                        var x = ip_local.Split('.');
+                        //var x = ip_local.Split('.');
 
-                        ip_local = x[0] + "." + x[1] + "." + x[2];
+                        //ip_local = x[0] + "." + x[1] + "." + x[2];
+
+                        string ip_local = textBox6.Text + ".";
 
                         var filter_ip = list_ipaddress.Where(stringToCheck => stringToCheck.Contains(ip_local));
 
@@ -4588,11 +4593,12 @@ namespace App_JC4._0
 
 
                         textBox1.Enabled = false;
-                            textBox2.Enabled = false;
-                            textBox3.Enabled = false;
-                            textBox4.Enabled = false;
+                        textBox2.Enabled = false;
+                        textBox3.Enabled = false;
+                        textBox4.Enabled = false;
+                        textBox6.Enabled = false;
 
-                            checkBox1.Enabled = false;
+                        checkBox1.Enabled = false;
 
                         //button1.Enabled = false;
 

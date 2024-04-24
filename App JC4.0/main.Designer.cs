@@ -76,6 +76,8 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -500,18 +502,37 @@
             // 
             this.textBox5.BackColor = System.Drawing.Color.Black;
             this.textBox5.ForeColor = System.Drawing.Color.Lime;
-            this.textBox5.Location = new System.Drawing.Point(249, 67);
+            this.textBox5.Location = new System.Drawing.Point(249, 129);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
             this.textBox5.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox5.Size = new System.Drawing.Size(302, 136);
+            this.textBox5.Size = new System.Drawing.Size(302, 74);
             this.textBox5.TabIndex = 48;
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(410, 106);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(141, 20);
+            this.textBox6.TabIndex = 50;
+            this.textBox6.Text = "192.168.10";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(383, 110);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(23, 13);
+            this.label21.TabIndex = 49;
+            this.label21.Text = "IP :";
             // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1259, 651);
+            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.label21);
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.label18);
@@ -605,6 +626,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
         private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Label label21;
     }
 }
 
