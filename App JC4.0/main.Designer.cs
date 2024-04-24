@@ -520,11 +520,11 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(383, 110);
+            this.label21.Location = new System.Drawing.Point(358, 109);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(23, 13);
+            this.label21.Size = new System.Drawing.Size(48, 13);
             this.label21.TabIndex = 49;
-            this.label21.Text = "IP :";
+            this.label21.Text = "Filter IP :";
             // 
             // main
             // 

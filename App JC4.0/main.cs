@@ -275,12 +275,11 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public bool ReadSettingDB()
+        public bool ReadSettingDB(string ip_filter)
         {
             try
-            {
-
-                string Query = "SELECT id, serial, product_name, ms_machinetype_id, ipaddress, ftp_username, ftp_password, path_log, path_recipe FROM tbl_setting WHERE ms_machinetype_id='1' OR ms_machinetype_id='2' OR ms_machinetype_id='3'";
+            {        
+                string Query = "SELECT id, serial, product_name, ms_machinetype_id, ipaddress, ftp_username, ftp_password, path_log, path_recipe FROM tbl_setting WHERE ipaddress LIKE '" + ip_filter + "%' AND ms_machinetype_id='1' OR ipaddress LIKE '" + ip_filter + "%' AND ms_machinetype_id='2' OR ipaddress LIKE '" + ip_filter + "%' AND ms_machinetype_id='3';";
 
                 MySqlConnection Conn = new MySqlConnection(connStr);
                 MySqlCommand cmd = new MySqlCommand(Query, Conn);
@@ -1440,7 +1439,7 @@ namespace App_JC4._0
                         // 2.Timeline Status
                         CheckTime_TimelineStatus(serial, machine_type, ip, fn_WaxshootLog, last_update_DB, true);
 
-                        Show_Status_GridView();
+                        Show_Status_GridView(textBox6.Text + ".");
 
                     }
                     else // file Waxshoot_log ยังไม่มีการ Update 
@@ -4057,7 +4056,7 @@ namespace App_JC4._0
                 {
                     Debug.WriteLine("IP: " + ip_ + "  -------> ONLINE");
 
-                    textBox5.Text += ip_ + "  -------> ONLINE\r\n";
+                    textBox5.Text += ip_ + " ---> " + serial_  + "  -------> ONLINE\r\n";
                     textBox5.ForeColor=Color.Lime;
                     textBox5.SelectionStart = textBox5.Text.Length;
                     textBox5.ScrollToCaret();
@@ -4065,10 +4064,10 @@ namespace App_JC4._0
                 else
                 {
                     Debug.WriteLine("IP: " + ip_ + "  -------> OFFLINE");
-                    textBox5.Text += ip_ + "  -------> OFFLINE\r\n";
-                    textBox5.ForeColor = Color.Lime;
-                    textBox5.SelectionStart = textBox5.Text.Length;
-                    textBox5.ScrollToCaret();
+                    //textBox5.Text += ip_ + " ---> " + serial_ + "  -------> OFFLINE\r\n";
+                    //textBox5.ForeColor = Color.Lime;
+                    //textBox5.SelectionStart = textBox5.Text.Length;
+                    //textBox5.ScrollToCaret();
                 }
                 
             }
@@ -4264,7 +4263,7 @@ namespace App_JC4._0
         }
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public string Show_Status_GridView()
+        public string Show_Status_GridView(string ip_filter)
         {
             var result = string.Empty;
             try
@@ -4280,7 +4279,7 @@ namespace App_JC4._0
                 string query = "SELECT " +
                     "tbl_setting.serial , tbl_setting.product_name, " +
                     "tr_status.ipaddress, tr_status.online, tr_status.run, tr_status.warning, tr_status.err, tr_status.altima_maintenance, tr_status.counter, tr_status.updated_time FROM tbl_setting " +
-                    "INNER JOIN tr_status ON tbl_setting.serial = tr_status.serial WHERE online = 1;";
+                    "INNER JOIN tr_status ON tbl_setting.serial = tr_status.serial WHERE tr_status.online = 1 AND tr_status.ipaddress LIKE '" + ip_filter + "%';";
 
 
                 using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -4544,7 +4543,7 @@ namespace App_JC4._0
             {
                 if (button1.Text == "START")
                 {
-                    bool res = ReadSettingDB(); // Get Setting
+                    bool res = ReadSettingDB(textBox6.Text + "."); // Get Setting
 
                     if (res)
                     {
@@ -4564,7 +4563,7 @@ namespace App_JC4._0
                         }
 
 
-                        Show_Status_GridView();
+                        Show_Status_GridView(textBox6.Text + ".");
 
                         //int cnt_id = list_id.Count();
 
@@ -4672,7 +4671,7 @@ namespace App_JC4._0
                 {
                     cnt_timer = 0;
                     //Check_Online();
-                    Show_Status_GridView();
+                    Show_Status_GridView(textBox6.Text + ".");
                 }
             }
             catch (Exception ex)
